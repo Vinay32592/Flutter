@@ -1,0 +1,215 @@
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(WaterTrackerApp());
+}
+
+class WaterTrackerApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: WaterHomePage(),
+    );
+  }
+}
+
+class WaterHomePage extends StatefulWidget {
+  @override
+  State<WaterHomePage> createState() => _WaterHomePageState();
+}
+
+class _WaterHomePageState extends State<WaterHomePage> {
+  final amountController = TextEditingController();
+
+  int goal = 2000;
+  int consumed = 0;
+  int entries = 0;
+
+  int get remaining => (goal - consumed).clamp(0, goal);
+
+  double get percentage =>
+      (consumed / goal * 100).clamp(0, 100);
+
+  void addWater() {
+    int? amount = int.tryParse(amountController.text);
+
+    if (amount == null || amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Enter a valid amount greater than 0!'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      consumed += amount;
+      entries++;
+      amountController.clear();
+    });
+  }
+
+  void resetWater() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Reset Water Intake'),
+        content: Text('Are you sure you want to reset today\'s data?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                consumed = 0;
+                entries = 0;
+              });
+              Navigator.pop(context);
+            },
+            child: Text('Reset'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    amountController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Water Intake Tracker'),
+        actions: [
+          IconButton(
+            onPressed: resetWater,
+            icon: Icon(Icons.refresh),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(20),
+        child: ListView(
+          children: [
+            Icon(
+              Icons.water_drop,
+              size: 70,
+              color: Colors.blue,
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Daily Goal: $goal mL',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20),
+            Card(
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Text('Total Consumed'),
+                    Text(
+                      '$consumed mL',
+                      style: TextStyle(
+                        fontSize: 28,
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    LinearProgressIndicator(
+                      value: percentage / 100,
+                      minHeight: 10,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      '${percentage.toStringAsFixed(1)}% Completed',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 15),
+            Row(
+              children: [
+                Expanded(
+                  child: Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Column(
+                        children: [
+                          Text('Remaining'),
+                          SizedBox(height: 5),
+                          Text(
+                            '$remaining mL',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Column(
+                        children: [
+                          Text('Entries Today'),
+                          SizedBox(height: 5),
+                          Text(
+                            '$entries',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
+            Text(
+              'Add Water Intake',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Enter amount in mL',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.local_drink),
+              ),
+            ),
+            SizedBox(height: 15),
+            ElevatedButton(
+              onPressed: addWater,
+              child: Text('ADD WATER'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
