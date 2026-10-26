@@ -1,0 +1,88 @@
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Student Information'),
+          backgroundColor: Colors.blue,
+        ),
+        backgroundColor: Colors.blue.shade50,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              StudentCard(
+                name: 'Vinay',
+                branch: 'CSE',
+                cgpa: '9.45',
+                icon: Icons.person,
+              ),
+
+              StudentCard(
+                name: 'Rahul',
+                branch: 'ECE',
+                cgpa: '9.0',
+                icon: Icons.school,
+              ),
+
+              StudentCard(
+                name: 'Suresh',
+                branch: 'IT',
+                cgpa: '8.8',
+                icon: Icons.face,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class StudentCard extends StatelessWidget {
+  final String name;
+  final String branch;
+  final String cgpa;
+  final IconData icon;
+
+  StudentCard({
+    required this.name,
+    required this.branch,
+    required this.cgpa,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.all(10),
+      elevation: 5,
+      child: ListTile(
+        leading: Icon(
+          icon,
+          size: 40,
+          color: Colors.blue,
+        ),
+        title: Text(
+          name,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        subtitle: Text(
+          'Branch: $branch\nCGPA: $cgpa',
+        ),
+      ),
+    );
+  }
+}
