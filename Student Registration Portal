@@ -1,0 +1,206 @@
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: RegistrationPage(),
+    );
+  }
+}
+
+class RegistrationPage extends StatefulWidget {
+  @override
+  State<RegistrationPage> createState() =>
+      _RegistrationPageState();
+}
+
+class _RegistrationPageState
+    extends State<RegistrationPage> {
+  final _formKey = GlobalKey<FormState>();
+
+  String? department;
+  String? gender;
+  bool accepted = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Student Registration Portal'),
+        backgroundColor: Colors.blue,
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Student Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null ||
+                      value.trim().isEmpty) {
+                    return 'Please enter student name';
+                  }
+                  return null;
+                },
+              ),
+
+              SizedBox(height: 15),
+
+              TextFormField(
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null ||
+                      value.trim().isEmpty) {
+                    return 'Please enter email';
+                  }
+                  if (!RegExp(
+                    r'^[\w.-]+@[\w.-]+\.[A-Za-z]{2,}$',
+                  ).hasMatch(value.trim())) {
+                    return 'Enter a valid email address';
+                  }
+                  return null;
+                },
+              ),
+
+              SizedBox(height: 15),
+
+              TextFormField(
+                keyboardType: TextInputType.phone,
+                maxLength: 10,
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null ||
+                      !RegExp(r'^[0-9]{10}$')
+                          .hasMatch(value)) {
+                    return 'Enter exactly 10 digits';
+                  }
+                  return null;
+                },
+              ),
+
+              SizedBox(height: 15),
+
+              DropdownButtonFormField<String>(
+                value: department,
+                decoration: InputDecoration(
+                  labelText: 'Department',
+                  border: OutlineInputBorder(),
+                ),
+                items: ['CSE', 'ECE', 'EEE', 'IT', 'MECH']
+                    .map((dept) => DropdownMenuItem(
+                          value: dept,
+                          child: Text(dept),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    department = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select department';
+                  }
+                  return null;
+                },
+              ),
+
+              SizedBox(height: 15),
+
+              DropdownButtonFormField<String>(
+                value: gender,
+                decoration: InputDecoration(
+                  labelText: 'Gender',
+                  border: OutlineInputBorder(),
+                ),
+                items: ['Male', 'Female', 'Other']
+                    .map((item) => DropdownMenuItem(
+                          value: item,
+                          child: Text(item),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    gender = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select gender';
+                  }
+                  return null;
+                },
+              ),
+
+              SizedBox(height: 10),
+
+              CheckboxListTile(
+                title: Text('I accept Terms & Conditions'),
+                value: accepted,
+                onChanged: (value) {
+                  setState(() {
+                    accepted = value ?? false;
+                  });
+                },
+                controlAffinity:
+                    ListTileControlAffinity.leading,
+              ),
+
+              SizedBox(height: 15),
+
+              ElevatedButton(
+                onPressed: () {
+                  bool valid =
+                      _formKey.currentState?.validate() ?? false;
+
+                  if (!accepted) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Please accept Terms & Conditions',
+                        ),
+                      ),
+                    );
+                  }
+
+                  if (valid && accepted) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Registration Submitted Successfully',
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                },
+                child: Text('Submit Registration'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
