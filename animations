@@ -1,0 +1,103 @@
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: AnimationScreen(),
+    );
+  }
+}
+
+class AnimationScreen extends StatefulWidget {
+  @override
+  State<AnimationScreen> createState() =>
+      _AnimationScreenState();
+}
+
+class _AnimationScreenState extends State<AnimationScreen> {
+  bool animate = false;
+
+  void startAnimation() {
+    setState(() {
+      animate = !animate;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Flutter Animations'),
+        backgroundColor: Colors.blue,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedOpacity(
+              opacity: animate ? 1.0 : 0.2,
+              duration: Duration(seconds: 1),
+              child: Text(
+                'Fade Animation',
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+
+            SizedBox(height: 20),
+
+            AnimatedContainer(
+              duration: Duration(seconds: 1),
+              transform: Matrix4.translationValues(
+                animate ? 50.0 : 0.0,
+                0.0,
+                0.0,
+              ),
+              child: Text(
+                'Slide Animation',
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+
+            SizedBox(height: 20),
+
+            AnimatedScale(
+              scale: animate ? 1.5 : 1.0,
+              duration: Duration(seconds: 1),
+              child: Icon(
+                Icons.star,
+                size: 40,
+                color: Colors.orange,
+              ),
+            ),
+
+            SizedBox(height: 30),
+
+            AnimatedRotation(
+              turns: animate ? 1.0 : 0.0,
+              duration: Duration(seconds: 1),
+              child: Icon(
+                Icons.refresh,
+                size: 50,
+                color: Colors.green,
+              ),
+            ),
+
+            SizedBox(height: 40),
+
+            ElevatedButton(
+              onPressed: startAnimation,
+              child: Text('Start Animation'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
